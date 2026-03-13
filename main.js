@@ -1,51 +1,58 @@
 // Initialize Lucide Icons
 lucide.createIcons();
 
-// Typing Animation
-const typingText = document.querySelector('.typing-text');
-const services = [
-    'Branding Design',
-    'UI/UX Design',
-    'Social Media Design',
-    'Web Graphics',
-    'Marketing Materials',
-    'Digital Products'
+// Bubble Animation Logic
+const bubblesContainer = document.getElementById('bubbles-container');
+const iconPaths = [
+    'assets/icons/picsart.png',
+    'assets/icons/canva.png',
+    'assets/icons/adobe_cc.png',
+    'https://upload.wikimedia.org/wikipedia/commons/f/fb/Adobe_Illustrator_CC_icon.svg',
+    'https://upload.wikimedia.org/wikipedia/commons/4/48/Adobe_InDesign_CC_icon.svg'
 ];
 
-let serviceIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-let typeSpeed = 100;
+function createBubble() {
+    if (!bubblesContainer) return;
 
-function type() {
-    const currentService = services[serviceIndex];
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
     
-    if (isDeleting) {
-        typingText.textContent = currentService.substring(0, charIndex - 1);
-        charIndex--;
-        typeSpeed = 50;
-    } else {
-        typingText.textContent = currentService.substring(0, charIndex + 1);
-        charIndex++;
-        typeSpeed = 100;
-    }
+    // Randomize Icon
+    const icon = document.createElement('img');
+    icon.src = iconPaths[Math.floor(Math.random() * iconPaths.length)];
+    bubble.appendChild(icon);
+    
+    // Randomize Size (between 60px and 110px)
+    const size = Math.floor(Math.random() * 50) + 60;
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    
+    // Randomize Position
+    bubble.style.left = `${Math.random() * 100}%`;
+    
+    // Randomize Animation Duration
+    const duration = Math.random() * 10 + 15;
+    bubble.style.animationDuration = `${duration}s`;
+    
+    // Randomize Delay
+    bubble.style.animationDelay = `${Math.random() * 5}s`;
 
-    if (!isDeleting && charIndex === currentService.length) {
-        isDeleting = true;
-        typeSpeed = 2000; // Pause at end
-    } else if (isDeleting && charIndex === 0) {
-        isDeleting = false;
-        serviceIndex = (serviceIndex + 1) % services.length;
-        typeSpeed = 500; // Pause before next word
-    }
+    bubblesContainer.appendChild(bubble);
 
-    setTimeout(type, typeSpeed);
+    // Remove bubble after animation ends
+    setTimeout(() => {
+        bubble.remove();
+    }, duration * 1000);
 }
 
-// Start typing
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(type, 1000);
-});
+// Spawn initial bubbles
+if (bubblesContainer) {
+    for (let i = 0; i < 8; i++) {
+        setTimeout(createBubble, i * 1500);
+    }
+    // Continue spawning
+    setInterval(createBubble, 3000);
+}
 
 // Scroll Reveal Animation with Stagger and Slide
 const observerOptions = {
@@ -83,12 +90,22 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Header Blur on Scroll
+// Header and Hero Effects on Scroll
 const header = document.querySelector('header');
+const heroTitle = document.querySelector('.hero-huge-title');
+
 window.addEventListener('scroll', () => {
+    // Header Blur and Position
     if (window.scrollY > 50) {
         header.style.top = '10px';
     } else {
         header.style.top = '20px';
+    }
+
+    // Hero Title Parallax/Fade
+    if (heroTitle) {
+        let scrollValue = window.scrollY;
+        heroTitle.style.transform = `translateY(${scrollValue * 0.3}px)`;
+        heroTitle.style.opacity = 1 - (scrollValue / 600);
     }
 });
